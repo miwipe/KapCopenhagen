@@ -1,4 +1,5 @@
-# KapCopenhagen
+# The Kap København (Copenhagen) metagenomic analysis
+
 
 This code are analyses that accompanies the Kjaer et al. 2022 article, and allows the reader to replicate the analysis in here. It consists of subdivisions of bash scripts and guides on how to:
 1. Setting up proper environments using conda whenever possible. 
@@ -9,7 +10,10 @@ This code are analyses that accompanies the Kjaer et al. 2022 article, and allow
 6. Extraction of unique reads classified to focal taxa that was used for downstream analysis
 7. Plant phylogenetic placement and molecular dating
 8. Mammalian phylogenetic placement and molecular dating
-9. Marine eukaryote SMAGs analysis
+9. Analyse the marine eukaryote SMAGs analysis
+
+
+All code, database build, mapping, analysis and DNA damage estimates was performed on a Red Hat Enterprise Linux Server running 7.7 (Maipo). 
 
 
 ## Creating environment and installing dependencies using conda
@@ -84,7 +88,7 @@ bowtie2-build --threads 50 $file $file
 done
 ```
 
-###  Downloading invertebrate references 
+### Downloading invertebrate references 
 
 ```
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/invertebrate/*genomic.fna.gz
@@ -106,7 +110,7 @@ bowtie2-build --threads 50 $file $file
 done
 ```
 
-#others, including mitochondria, plants, protozoans, and plastids
+### others, including mitochondria, plants, protozoans, and plastids
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/mitochondrion/*genomic.fna.gz
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/plant/*genomic.fna.gz
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa/*genomic.fna.gz
@@ -131,4 +135,3 @@ done
 ```
 
 
-Database build, mapping and DNA damage estimates was performed on a Red Hat Enterprise Linux Server running 7.7 (Maipo). 
