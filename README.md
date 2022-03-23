@@ -32,7 +32,7 @@ git clone https://github.com/keenerd/gz-sort; cd gz-sort; make; ./gz-sort -h
 cd ../../
 ```
 
-## Downloading and building databases
+## Downloading and building the RefSeq databases
 
 
 ### Downloading fungi, viral and archaea reference genomes
@@ -63,7 +63,7 @@ bowtie2-build --threads 50 $file $file
 done
 ```
 
-#vert_mam
+### Downloading mammalian references 
 ``` 
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/vertebrate_mammalian/*genomic.fna.gz
 gzip -d *
@@ -84,7 +84,8 @@ bowtie2-build --threads 50 $file $file
 done
 ```
 
-#invert
+###  Downloading invertebrate references 
+
 ```
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/invertebrate/*genomic.fna.gz
 gzip -d *
