@@ -12,9 +12,23 @@ This code are analyses that accompanies the Kjaer et al. 2022 article, and allow
 9. Marine eukaryote SMAGs analysis
 
 
-## creating environment and installing dependencies
+## Creating environment and installing dependencies using conda
 
+```
+conda env create -f environment.yml
+conda activate KapK
+```
+```
+mkdir programmes
+cd programmes
 
+wget http://kirill-kryukov.com/study/tools/fasta-splitter/files/fasta-splitter-0.2.6.zip 
+unzip fasta-splitter-0.2.6.zip 
+
+git clone https://github.com/keenerd/gz-sort; cd gz-sort; make; ./gz-sort -h
+
+cd ../../
+```
 
 ## Downloading and building databases
 
