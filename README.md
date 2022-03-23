@@ -14,10 +14,12 @@ This code are analyses that accompanies the Kjaer et al. 2022 article, and allow
 
 ## Creating environment and installing dependencies using conda
 
+### Making conda environment with provided environment.yml file
 ```
 conda env create -f environment.yml
 conda activate KapK
 ```
+### Installing additional dependencies
 ```
 mkdir programmes
 cd programmes
@@ -32,7 +34,98 @@ cd ../../
 
 ## Downloading and building databases
 
+
+### Downloading fungi, viral and archaea reference genomes
 ```
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/fungi/*genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral/*genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea/*genomic.fna.gz
+```
+### Downloading other vertebrate references than mammalian
+
+```
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/vertebrate_other/*genomic.fna.gz
+gzip -d *
+cat *.fna > vert_other.fa
+rm *.fna
+/programmes/fasta-splitter.pl --n-parts 9 vert_other.fa
+rm vert_other.fa
+i=1
+for file in vert_other.part*
+do
+bname=$(basename "$file" | cut -d. -f1)
+mv $file $bname.$i
+i=$(expr ${i} + 1)
+done
+for file in vert_other.?
+do
+bowtie2-build --threads 50 $file $file
+done
+```
+
+#vert_mam
+``` 
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/vertebrate_mammalian/*genomic.fna.gz
+gzip -d *
+cat *.fna > vert_mam.fa
+rm *.fna
+/programmes/fasta-splitter.pl --n-parts 18 vert_mam.fa
+rm vert_mam.fa
+i=1
+for file in vert_mam.part*
+do
+bname=$(basename "$file" | cut -d. -f1)
+mv $file $bname.$i
+i=$(expr ${i} + 1)
+done
+for file in vert_mam.*
+do
+bowtie2-build --threads 50 $file $file
+done
+```
+
+#invert
+```
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/invertebrate/*genomic.fna.gz
+gzip -d *
+cat *.fna > invert.fa
+rm *.fna
+/programmes/fasta-splitter.pl --n-parts 3 invert.fa
+rm invert.fa
+i=1
+for file in invert.part*
+do
+bname=$(basename "$file" | cut -d. -f1)
+mv $file $bname.$i
+i=$(expr ${i} + 1)
+done
+for file in invert.?
+do
+bowtie2-build --threads 50 $file $file
+done
+```
+
+#others, including mitochondria, plants, protozoans, and plastids
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/mitochondrion/*genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/plant/*genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa/*genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/plastid/*genomic.fna.gz
+gzip -d *
+cat *.fna > others.fa
+rm *.fna
+/programmes/fasta-splitter.pl --n-parts 5 others.fa
+rm others.fa
+i=1
+for file in others.part*
+do
+bname=$(basename "$file" | cut -d. -f1)
+mv $file $bname.$i
+i=$(expr ${i} + 1)
+done
+for file in others.?
+do
+bowtie2-build --threads 50 $file $file
+done
 
 ```
 
