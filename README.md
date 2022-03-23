@@ -1,4 +1,4 @@
-# The Kap København (Copenhagen) metagenomic analysis
+# The Kap København (Cape Copenhagen) metagenomic analysis
 
 
 This code are analyses that accompanies the Kjaer et al. 2022 article, and allows the reader to replicate the analysis in here. It consists of subdivisions of bash scripts and guides on how to:
@@ -8,9 +8,10 @@ This code are analyses that accompanies the Kjaer et al. 2022 article, and allow
 4. Code for performing the taxonomic profiling, DNA damage and read length estimates, using metaDMG.
 5. Rscript for parsing, filtering and plotting profiles.
 6. Extraction of unique reads classified to focal taxa that was used for downstream analysis
-7. Plant phylogenetic placement and molecular dating
-8. Mammalian phylogenetic placement and molecular dating
-9. Analyse the marine eukaryote SMAGs analysis
+7. PathPhynder placements of chloroplasts and mitochondrias
+8. Plant phylogenetic placement and molecular dating
+9. Mammalian phylogenetic placement and molecular dating
+10. Performing the marine eukaryote SMAGs analysis
 
 
 All code, database build, mapping, analysis and DNA damage estimates was performed on a Red Hat Enterprise Linux Server running 7.7 (Maipo). 
@@ -110,7 +111,8 @@ bowtie2-build --threads 50 $file $file
 done
 ```
 
-### others, including mitochondria, plants, protozoans, and plastids
+### Other available references, including mitochondria, plants, protozoans and plastids
+```
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/mitochondrion/*genomic.fna.gz
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/plant/*genomic.fna.gz
 wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa/*genomic.fna.gz
@@ -131,7 +133,6 @@ for file in others.?
 do
 bowtie2-build --threads 50 $file $file
 done
-
 ```
 
 
