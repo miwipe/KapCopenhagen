@@ -14,7 +14,7 @@ This code are analyses that accompanies the Kjaer et al. 2022 article, and allow
 10. Performing the marine eukaryote SMAGs analysis
 
 
-All code, database build, mapping, analysis and DNA damage estimates was performed on a Red Hat Enterprise Linux Server running 7.7 (Maipo). 
+All code, database build, mapping, analysis and DNA damage estimates was performed on a Red Hat Enterprise Linux Server running 7.7 (Maipo), with 88 cores and 1Tb memory.
 
 
 ## Creating environment and installing dependencies using conda
@@ -134,5 +134,53 @@ do
 bowtie2-build --threads 50 $file $file
 done
 ```
+### merging raw data per sample and trimming adaptors
+
+Create a list of uniq sample names which needs to be merged cutting option -f might vary depending on your local file system. 
+```
+ll *fastq.gz | cut -f7 -d/ | uniq > merge.list
+
+while read -r line
+do
+arr=($line)
+lib=${arr[0]}
+echo $lib
+AdapterRemoval --file1 $lib*R1*.fastq.gz --file2 $lib*R2*.fastq.gz --mm 3 --minlength 30 --trimns --trimqualities --minquality 30 --basename $lib --collapse --adapter1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG --adapter2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT 2> adap_rem.$lib.log.txt
+done < merge.list
+
+```
+
+Next merge the collapsed and the collapsed truncated files per sample
+
+```
+while read -r line
+do
+arr=($line)
+#if [ "${arr[1]}" = "$(basename $folder)" ]
+lib=${arr[0]}
+echo $lib
+cat $lib.collapsed $lib.collapsed.truncated > $lib.col.fq &
+done < merge.list
+```
+
+### QC filtering, mapping, merging and sorting alignments
+
+All 
+
+```
+./holi.sh &> holi.log.txt
+```
+
+
+
+# Mammalian mitochondrial phylogenetic placement "Binia put you guide and/or code here, bash scripts in the scripts folder"
+
+
+# Plant chloroplast phylogenetic placement "Bianca put you guide and/or code here, bash scripts in the scripts folder"
+
+
+# Marine eukaryotic SMAGs analysis Antonios code
+
+
 
 
