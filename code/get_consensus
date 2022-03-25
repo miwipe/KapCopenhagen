@@ -18,4 +18,3 @@ try:
 		the_file.write('\n')
 except:
 	print("Usage: get_consensus input.fa output.fa")
-
