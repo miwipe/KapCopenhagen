@@ -310,8 +310,7 @@ FOR TRANSVERSIONS ONLY
 pathPhynder -s all -t 100 -m transversions -i /path/to/tree/ref_tree.nwk -p /path/to/pathphynder_results/tree_data/taxa_pathphynder_tree -b outputfolderpath/pathPhynder_analysis/map_to_cons/Sample.taxa.sort.bam -r /path/to/Cons_NCBI_mitogenome_references.fa
 ```
 
-# Workflow for molecular dating on the ancient Betula chloroplast from Kap Kopenhagen.
-by Bianca De Sanctis. March 24 2022.
+# Molecular dating of the ancient Betula chloroplast from Kap København.
 
 This workflow will describe how we performed the molecular dating analysis on the Betula chloroplast sequence.
 
