@@ -19,7 +19,7 @@ All code, database build, mapping, analysis and DNA damage estimates was perform
 
 ## Creating environment and installing dependencies using conda
 
-### Making conda environment with provided environment.yml file
+### Making conda environment with the provided environment.yml file in the data folder
 ```
 conda env create -f environment.yml
 conda activate KapK
@@ -415,7 +415,8 @@ We attach the multiple sequence alignment used and the main BEAST xml file.
 
 This gave a 95% HPD of [-2.0172,-0.6786] and a median of 1.323 million years for the age of the ancient Betula chloroplast sequence.
 
-Marine eukaryotic SMAGs analysis Antonios code
+# Marine eukaryotic SMAGs analysis Antonios code 
+Link to repo? 
 
 
 
