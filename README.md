@@ -1,4 +1,4 @@
-# The Kap København (Cape Copenhagen) metagenomic analysis
+# The Kap København (Cape Copenhagen)
 
 
 This code are analyses that accompanies the Kjaer et al. 2022 article, and allows the reader to replicate the analysis in here. It consists of subdivisions of bash scripts and guides on how to:
