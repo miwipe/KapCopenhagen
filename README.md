@@ -22,7 +22,7 @@ All code, database build, mapping, analysis and DNA damage estimates was perform
 ### Making conda environment with the provided environment.yml file in the data folder
 ```
 conda env create -f environment.yml
-conda activate KapK
+conda activate KapKBH
 ```
 ### Installing additional dependencies
 ```
@@ -133,7 +133,20 @@ for file in others.?
 do
 bowtie2-build --threads 50 $file $file
 done
+``` 
+## Downloading and building the PhyloNorway arctic database
+In your browser navigate to the PhyloNorway plant genome repo here https://dataverse.no/dataset.xhtml;jsessionid=dfe334bbadc5fb9c5eab4332d568?persistentId=doi:10.18710/3CVQAG&version=DRAFT
+make sure you have enough data storage available as these file take up +200 GB storage, and will take up even more once index by bowtie2. 
+
+Now in your terminal convert fasta file into indexed libraries, by:
+``` 
+for file in *fasta
+do
+bowtie2-build --threads 50 $file $file
+done
 ```
+ 
+
 ### merging raw data per sample and trimming adaptors
 
 Create a list of uniq sample names which needs to be merged cutting option -f might vary depending on your local file system. 
