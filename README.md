@@ -173,7 +173,7 @@ All
 
 
 
-# Mammalian mitochondrial phylogenetic placement "Binia put you guide and/or code here, bash scripts in the scripts folder"
+# Mammalian mitochondrial phylogenetic placement
 ## Concatenating and aligning mitogenome reference sequences downloaded from NCBI (for PathPhynder)
 ```
 cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
