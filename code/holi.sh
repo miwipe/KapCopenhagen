@@ -40,67 +40,67 @@ rm *wt
 rm *sai
 rm *rmdup.discard.fa
 
-for DB in /willerslev/datasets/ycw/norway_plant_ctgenoms/complete_genomes/final_db/norPlantCom.?
+for DB in /database/norPlantCom.?
 do
 echo Mapping adap2_kmer2_$bname.pp.rmdup.fq against $DB
 nice -20 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/ncbi_nt/nt.?
+for DB in /database/nt.?
 do
 echo Mapping adap2_kmer2_$bname.pp.rmdup.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/refseq/vert_other/vert_other.?
+for DB in /database/vert_other.?
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/refseq/vert_mam/vert_mam.?
+for DB in /database/vert_mam.?
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/refseq/vert_mam/vert_mam.??
+for DB in /database/vert_mam.??
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/refseq/invert/invert.?
+for DB in /database/invert.?
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/refseq/microbe/viral_fungi_archaea.fa
+for DB in /database/viral_fungi_archaea.fa
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/microbial_dbs/GTDB/r89/bowtie2/gtdb_r89
+for DB in /database/gtdb_r89
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/ycw/polar_animals/arctic_animals.fa
+for DB in /database/arctic_animals.fa
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/ycw/polar_animals/arctic_animals_other.fa
+for DB in /database/arctic_animals_other.fa
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
 done
 
-for DB in /willerslev/datasets/ycw/polar_animals/arctic_animal_b3.fa
+for DB in /database/arctic_animal_b3.fa
 do
 echo Mapping $bname.fq against $DB
 bowtie2 --threads 80 -k 1000 -x $DB -U adap2_kmer2_$bname.pp.rmdup.fq --no-unal | samtools view -bS - > $bname.$(basename $DB).bam
