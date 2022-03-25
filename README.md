@@ -19,7 +19,7 @@ All code, database build, mapping, analysis and DNA damage estimates was perform
 
 ## Creating environment and installing dependencies using conda
 
-### Making conda environment with provided environment.yml file
+### Making conda environment with the provided environment.yml file in the data folder
 ```
 conda env create -f environment.yml
 conda activate KapK
