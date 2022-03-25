@@ -310,7 +310,7 @@ KX703002.1 LC542973.1 MG386367.1 MG386368.1 MG386369.1 MG386370.1 MG386401.1 MG6
 ```
 which includes a single Alnus sample, the closest outgroup with a tight chloroplast divergence date. This outgroup sample is necessary to calibrate the phylogeny.
 
-We also used three extra sequences not on NCBI, from Inger Alsos's arctic plant genome data. These were:
+We also used three extra sequences not on NCBI, from the PhyloNorway plant genome dataset (which can be found in the data folder). These were:
 ```
 Betula_fruticosa-216991.TROM_V_201226.BXA-CDT.chloro.fasta
 Betula_nana_nana-216990.TROM_V_96939.BMB-CC.chloro.fasta
