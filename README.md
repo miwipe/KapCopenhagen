@@ -123,7 +123,7 @@ do
 bowtie2-build --threads 50 $file $file
 done
 ``` 
-## Downloading and building the PhyloNorway arctic database
+## Downloading and building the PhyloNorway arctic and boreal plant database (Wang et al. 2021, https://www.nature.com/articles/s41586-021-04016-x)
 In your browser navigate to the PhyloNorway plant genome repo here https://dataverse.no/dataset.xhtml;jsessionid=dfe334bbadc5fb9c5eab4332d568?persistentId=doi:10.18710/3CVQAG&version=DRAFT
 make sure you have enough data storage available as these file take up +200 GB storage, and will take up even more once index by bowtie2. 
 
@@ -134,11 +134,11 @@ do
 bowtie2-build --threads 50 $file $file
 done
 ```
- 
 
-### merging raw data per sample and trimming adaptors
+## Preprocessing quality check, adaptor trimming and mapping the raw sequence data
 
-Create a list of uniq sample names which needs to be merged cutting option -f might vary depending on your local file system. 
+### Merging and trimming
+Merge all raw data per sample and trim adaptors by first creating a list of uniq sample names which needs to be merged (OBS! cutting option -f might vary depending on your local file system.) 
 ```
 ll *fastq.gz | cut -f7 -d/ | uniq > merge.list
 
@@ -165,16 +165,104 @@ cat $lib.collapsed $lib.collapsed.truncated > $lib.col.fq &
 done < merge.list
 ```
 
-### QC filtering, mapping, merging and sorting alignments
+### Further quality filtering, mapping reads against databases and the merge of all alignments per sample to each database
 
-All 
+Now the Holi bash script is executed in a virtual screen (or like) to allow it to run continuosly. This step is the most time, cpu and memmory consuming step. The holi.log.txt file will contain all information printed to screen by the different programmes, here you will be able to find read counts, duplication rate, low complexity estimates, reads aligned to each database, size of the bam files and any potential error messages that can appear. 
 
 ```
 ./holi.sh &> holi.log.txt
 ```
 
+### Sorting the alignments
 
+The downstream analysis assumes that the alignments have been sorted by readID, thus all alignments per read are printed after each other. Due to the excess size of the headers, we reached the limit of the bam header size (~2Gb), and are therefore restricting the merged alignment files to the sam.gz format and have had to find an alternative way to sort the alignments in the sam.gz file while keeping the sam file format. The following command is executed in a virtual screen to allow continous processing. 
 
+```
+for file in *sam.gz
+do
+time samtools view -@ 60 -H $file | gzip > $file.Header.sam.gz
+time samtools view -@ 60  $file | gzip > $file.alignment.sam.gz
+time /willerslev/software/gz-sort/gz-sort -S 30G -P 1 $file.alignment.sam.gz $file.alignment.sort.sam.gz
+time zcat $file.Header.sam.gz $file.alignment.sort.sam.gz | samtools view -h -o $file.all_sorted.sam.gz
+rm $file.Header.sam.gz $file.alignment.sam.gz $file.alignment.sort.sam.gz
+done
+```
+
+## Taxonomic profiling and DNA damage estimates (metaDMG) for each individual taxonomic node
+
+We used metaDMG (https://github.com/metaDMG/metaDMG) to taxonomically classify each individual read to the loest taxonomic node possible using a similarity identity between 95-100% to reference.  
+
+```
+conda activate metaDMG7
+```
+
+### Generate config.yaml file and specify files, taxonomy paths etc. also in the config file other lca and metaDMG settings can be set.
+```
+nam=/data/ncbi_taxonomy3dec2020/names.dmp
+nod=/data/ncbi_taxonomy3dec2020/nodes.dmp
+acc=/data/ncbi_taxonomy3dec2020/combined_taxid_accssionNO_20201120.gz
+```
+### Create a config file, running metaDMG and converting output to text format
+```
+metaDMG config *.sam.gz --names $nam --nodes $nod --acc2tax $acc
+
+metaDMG compute config.yaml
+
+metaDMG convert --output KapK_metaDMGout.csv
+```
+
+## Plotting, data filtering and exploration
+A homebrewed Rscript was written to parse, filter by DNA damage and analyse the taxonomic output data in Rstudio. In the folder scripts KapK.R can be loaded into R or Rstudio for data wrangling and plotting. 
+
+## Extracting reads classified uniquely to key taxa for phylogenetic placement and molecular age estimation
+
+In the output folder of metaDMG a subfolder (lca) contains the per read classified information, from here we can use either a simple grep command to extract all reads within a specified taxonomic node (e.g. in the example below all reads classified to Elephantidae or lower are extracted) and create a fasta file. 
+
+```
+for file in *lca.txt.gz; do grep 'Elephantidae' $file | awk -F":" '{print ">"$1":"$2":"$3":"$4":"$5":"$6":"$7 getline; print $8}' > $file.Elephantidae.fa & done
+```
+
+Alternatively, if nucleotide quality scores are desired the read IDs can be extracted and used to extract the reads and additional information from the original raw fastq files using Seqtk and the commands below.
+
+Make a list of all the lca 
+```
+ll *lca.txt.gz | awk '{print $}' > sample.list
+
+```
+Extraxt readID's for a taxa.list (taxonomic level and below, a text file with a taxonomic name per line) from a samplelist of .lca.txt.gz files 
+```
+#! /bin/bash -x
+while read -r line
+do
+arr=($line)
+lib=${arr[0]}
+echo $lib
+cat taxa.list | parallel -j20 "zgrep {} $lib | cut -f1,2,3,4,5,6,7 -d: > $lib.{}.readID.txt"
+done < sample.list
+```
+2. ########
+```
+wc -l *readID.txt | awk '$1 == 0' | awk '{print $2}' > rm.list
+cat rm.list | parallel -j20 "rm {}"
+```
+3. ########
+```
+mkdir fq_link
+ln -s RMDUP_FQ_Files fq_link
+```
+4. ##############
+```
+for infile in *readID.txt
+do
+bname=$(basename $infile)
+bname1=$(echo $bname | sed 's/.readID.txt*/.fq/')
+bname2=$(echo $bname | cut -f2 -d: | cut -f2 -d" " | cut -f1 -d.)
+echo $bname1
+echo $bname2
+seqtk subseq fq_link/*$bname2*rmdup.fq $bname > $bname1 &
+seqtk seq -a $bname1 > $bname1.fa
+done
+```
 # Mammalian mitochondrial phylogenetic placement
 ## Concatenating and aligning mitogenome reference sequences downloaded from NCBI (for PathPhynder)
 ```
