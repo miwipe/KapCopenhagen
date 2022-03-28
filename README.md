@@ -229,7 +229,7 @@ Make a list of all the lca
 ll *lca.txt.gz | awk '{print $}' > sample.list
 
 ```
-Extraxt readID's for a taxa.list (taxonomic level and below, a text file with a taxonomic name per line) from a samplelist of .lca.txt.gz files 
+Extract readID's for a taxa.list (taxonomic level and below, a text file with a taxonomic name per line) from a samplelist of .lca.txt.gz files 
 ```
 #! /bin/bash -x
 while read -r line
@@ -240,17 +240,18 @@ echo $lib
 cat taxa.list | parallel -j20 "zgrep {} $lib | cut -f1,2,3,4,5,6,7 -d: > $lib.{}.readID.txt"
 done < sample.list
 ```
-2. ########
+Remove files with no reads. 
 ```
 wc -l *readID.txt | awk '$1 == 0' | awk '{print $2}' > rm.list
 cat rm.list | parallel -j20 "rm {}"
 ```
-3. ########
+Create a folder to place links for all fastq files inside, and make links. 
 ```
 mkdir fq_link
-ln -s RMDUP_FQ_Files fq_link
+ln -s /path_to_holi_folders/*holi/*sam.gz fq_link
+
 ```
-4. #########
+Extract reads from origin fastq files, and create fastq files with only reads classified to the taxonomic ranks in the taxa.list.
 ```
 for infile in *readID.txt
 do
@@ -268,25 +269,25 @@ done
 For the mammalian mitochondrial phylogenetic placement analysis we created Multiple Sequence Alignments (MSA) for all recovered mammalian taxa and computed trees using PathPhynder and BEAST. 
 
 ## BEAST (Phylogenetic placement mtDNA)
-## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
+### Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
 ```
 cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
 
 mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_references.fa
 ```
-## Step 2: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
+### Step 2: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
 1.) Alignment file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
 
 2.) Alignment created from all clade-consensus mitogenome references in Geneious (*_NCBI_mitogenome_references.fa)
 
 3.) Consensus sequence created with 75% Majority rule from all clade-consensus mitogenome references in Geneious (Cons_NCBI_mitogenome_references_cons.fa)
 
-## Step 3: Map ancient sample reads to consensus sequence made from all clade-consensus mitogenome references
+### Step 3: Map ancient sample reads to consensus sequence made from all clade-consensus mitogenome references
 ```
 bwa aln -l 1024 -n 0.001 -t 10 Cons_NCBI_mitogenome_references_cons.fa Sample.taxa.fq | bwa samse Cons_NCBI_mitogenome_references_cons.fa  - Sample.taxa.fq | samtools view -F 4 -q 25 -@ 10 -uS - | samtools sort -@ 10 -o Sample.taxa.sort.bam
 ```
 
-## Step 4: Create consensus sequence for sample 
+### Step 4: Create consensus sequence for sample 
 ```
 angsd -dofasta 2 -docounts 1 -minmapq 25 -minq 25 -uniqueonly 1 -mininddepth 5 -i Sample.taxa.sort.bam -out Cons_Sample.taxa.depth5
 
@@ -294,13 +295,13 @@ gunzip Cons_Sample.taxa.depth5.fa.gz
 bash rename_fasta_header.sh
 ```
 
-## Step 5: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus
+### Step 5: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus
 ```
 cat Cons_Sample.taxa.depth5.fa *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references_query.fa
 mafft --thread n cat_NCBI_mitogenome_references_query.fa > Aln_NCBI_mitogenome_references_query.fa
 ```
 
-## Step 6: Running BEAST (Phylogenetic placement mtDNA)
+### Step 6: Running BEAST (Phylogenetic placement mtDNA)
 
 We confirmed the phylogenetic placement of our sequence using a selection of Elephantidae mitochondrial reference sequences, GTR+G, strict clock, a birth-death substitution model, and ran the MCMC chain for 20,000,000 runs, sampling every 20,000 steps. Convergence was assessed using Tracer v1.7.2 and an effective sample size (ESS) > 200. 
 
@@ -318,14 +319,14 @@ beast2 -threads n Aln_NCBI_mitogenome_references_query.xml
 
 
 ## PathPhynder (Phylogenetic placement of the mitochondrial and chloroplast DNA)
-## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
+### Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
 ```
 cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
 
 mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_references.fa
 ```
 
-## Step 2: Running BEAST (to create reference tree for PathPhynder)
+### Step 2: Running BEAST (to create reference tree for PathPhynder)
 1.) Aln_NCBI_mitogenome_references.fa opened in BEAUti (v1.10.4)
 
 2.) Run with default parameters, MCMC chain for 20,000,000 runs, sampling every 20,000 steps
@@ -391,16 +392,16 @@ First, create a directory pathphynder_results in e.g. outputfolderpath/pathPhynd
 ```
 mkdir pathPhynder_analysis
 ```
-### Step 1: Assigning informative SNPs to tree branches
+#### Step 1: Assigning informative SNPs to tree branches
 ```
 /home/kbt252/Software/phynder/phynder -B -o /path/to/pathphynder_results/branches.snp /path/to/tree/ref_tree.nwk /path/to/fixed_cons_vcf/NCBI_mitogenome_references_fixed_cons.vcf
 ```
-### Step 2: Call SNPs in a given dataset of ancient samples and find the best path and branch where these can be mapped in the tree
+#### Step 2: Call SNPs in a given dataset of ancient samples and find the best path and branch where these can be mapped in the tree
 Prepare data: this will output a bed file for calling variants and tables for pylogenetic placement. Start command in results folder (e.g. pathphynder_results), as this command creates a new directory called “tree_data” in the folder you run the command in
 ```
 pathPhynder -s prepare -i /path/to/tree/ref_tree.nwk -p taxa_pathphynder_tree -f /path/to/pathphynder_results/branches.snp  -r /path/to/Cons_NCBI_mitogenome_references.fa
 ```
-### Step 3: Find best branch path and create tree file
+#### Step 3: Find best branch path and create tree file
 
 FOR SINGLE BAM FILE TRANSITIONS AND TRANSVERSIONS
 ```
@@ -425,7 +426,7 @@ beast -threads n Mastodon_carbondated.xml
 beast -threads n Mastodon_carbondated_moldated.xml
 ```
 
-# Molecular dating of the ancient Betula chloroplast from Kap København.
+## Molecular dating of the ancient Betula chloroplast from Kap København.
 
 This workflow will describe how we performed the molecular dating analysis on the Betula chloroplast sequence.
 
@@ -542,7 +543,7 @@ We attach the multiple sequence alignment used and the main BEAST xml file.
 
 This gave a 95% HPD of [-2.0172,-0.6786] and a median of 1.323 million years for the age of the ancient Betula chloroplast sequence.
 
-# Marine eukaryotic SMAGs analysis Antonios code 
+## Marine eukaryotic SMAGs analysis Antonios code 
 Link to repo? 
 
 
