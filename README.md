@@ -317,7 +317,7 @@ beast2 -threads n Aln_NCBI_mitogenome_references_query.xml
 5.) FigTree (v1.4.4), Tree visualized with posterior probabilities
 
 
-## PathPhynder (Phylogenetic placement mtDNA)
+## PathPhynder (Phylogenetic placement of the mitochondrial and chloroplast DNA)
 ## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
 ```
 cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
