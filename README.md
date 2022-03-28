@@ -274,25 +274,33 @@ cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
 
 mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_references.fa
 ```
-## Step 2: Create consensus sequence for sample 
+## Step 2: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
+1.) Alignment file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
+
+2.) Alignment created from all clade-consensus mitogenome references in Geneious (*_NCBI_mitogenome_references.fa)
+
+3.) Consensus sequence created with 75% Majority rule from all clade-consensus mitogenome references in Geneious (Cons_NCBI_mitogenome_references_cons.fa)
+
+## Step 3: Map ancient sample reads (mastodon) to consensus sequence made from all (Elephantidae) clade-consensus mitogenome references
+```
+bwa aln -l 1024 -n 0.001 -t 10 Cons_NCBI_mitogenome_references_cons.fa Sample.taxa.fq | bwa samse Cons_NCBI_mitogenome_references_cons.fa  - Sample.taxa.fq | samtools view -F 4 -q 25 -@ 10 -uS - | samtools sort -@ 10 -o Sample.taxa.sort.bam
+```
+
+## Step 4: Create consensus sequence for sample 
 ```
 angsd -dofasta 2 -docounts 1 -minmapq 25 -minq 25 -uniqueonly 1 -mininddepth 5 -i Sample.taxa.sort.bam -out Cons_Sample.taxa.depth5
 
 gunzip Cons_Sample.taxa.depth5.fa.gz
 bash rename_fasta_header.sh
 ```
-## Step 3: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
-1.) Alignment file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
 
-2.) Alignment created from all clade-consensus mitogenome references in Geneious (*_NCBI_mitogenome_references.fa)
-
-## Step 4: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus
+## Step 5: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus
 ```
 cat Cons_Sample.taxa.depth5.fa *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references_query.fa
 mafft --thread n cat_NCBI_mitogenome_references_query.fa > Aln_NCBI_mitogenome_references_query.fa
 ```
 
-## Step 5: Running BEAST (Phylogenetic placement mtDNA)
+## Step 6: Running BEAST (Phylogenetic placement mtDNA)
 
 We confirmed the phylogenetic placement of our sequence using a selection of Elephantidae mitochondrial reference sequences, GTR+G, strict clock, a birth-death substitution model, and ran the MCMC chain for 20,000,000 runs, sampling every 20,000 steps. Convergence was assessed using Tracer v1.7.2 and an effective sample size (ESS) > 200. 
 
