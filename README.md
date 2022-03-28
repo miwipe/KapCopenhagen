@@ -289,9 +289,12 @@ mafft --thread n cat_NCBI_mitogenome_references_query.fa > Aln_NCBI_mitogenome_r
 2.) Alignment created from all clade-consensus mitogenome references in Geneious
 
 ## Running BEAST (Phylogenetic placement mtDNA)
+
+We confirmed the phylogenetic placement of our sequence using a selection of Elephantidae mitochondrial reference sequences, GTR+G, strict clock, a birth-death substitution model, and ran the MCMC chain for 20,000,000 runs, sampling every 20,000 steps. Convergence was assessed using Tracer v1.7.2 and an effective sample size (ESS) > 200. 
+
 1.) Aln_NCBI_mitogenome_references_query.fa opened in BEAUti (v1.10.4)
 
-2.) Run with default parameters, chain 2mio
+2.) Run with GTR+G, strict clock, a birth-death substitution model, and ran the MCMC chain for 20,000,000 runs, sampling every 20,000 steps
 ```
 beast2 -threads n Aln_NCBI_mitogenome_references_query.xml
 ```
@@ -304,7 +307,7 @@ beast2 -threads n Aln_NCBI_mitogenome_references_query.xml
 ## Running BEAST (Reference tree for PathPhynder)
 1.) Aln_NCBI_mitogenome_references.fa opened in BEAUti (v1.10.4)
 
-2.) Run with default parameters, chain 2mio
+2.) Run with default parameters, MCMC chain for 20,000,000 runs, sampling every 20,000 steps
 ```
 beast2 -threads n Aln_NCBI_mitogenome_references.xml
 ```
@@ -386,6 +389,9 @@ FOR TRANSVERSIONS ONLY
 ```
 pathPhynder -s all -t 100 -m transversions -i /path/to/tree/ref_tree.nwk -p /path/to/pathphynder_results/tree_data/taxa_pathphynder_tree -b outputfolderpath/pathPhynder_analysis/map_to_cons/Sample.taxa.sort.bam -r /path/to/Cons_NCBI_mitogenome_references.fa
 ```
+## Molecular dating of the ancient mastodon mitochondrial genome from Kap København (BEAST)
+
+We used two separate approaches when dating our mastodon mitogenome, as demonstrated in a recent publication (Karpinski et al. 2020). First, we determined the age of our sequence by comparing against a dataset of radiocarbon dated specimens (n=13) only. Secondly, we estimated the age of our sequence including both molecularly (n=22) and radiocarbon dated (n=13) specimens using the molecular dates previously determined by Karpinski et al.(2020). We utilised the same BEAST parameters as Karpinski et al. and set the age of our sample with a gamma distribution (5%-Quantile: 8.72E4, Median: 1.178E6, 95%-Quantile: 5.093E6; Initial value: 74,900; Shape: 1; Scale: 1,700,000). In short, we specified a substitution model of GTR+G4, a strict clock, constant population size, and ran the MCMC chain for 50,000,000 runs, sampling every 50,000 steps. Convergence of the run was again determined using Tracer. 
 
 # Molecular dating of the ancient Betula chloroplast from Kap København.
 
