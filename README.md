@@ -250,7 +250,7 @@ cat rm.list | parallel -j20 "rm {}"
 mkdir fq_link
 ln -s RMDUP_FQ_Files fq_link
 ```
-4. ##############
+4. #########
 ```
 for infile in *readID.txt
 do
@@ -264,31 +264,28 @@ seqtk seq -a $bname1 > $bname1.fa
 done
 ```
 # Mammalian mitochondrial phylogenetic placement
-## Concatenating and aligning mitogenome reference sequences downloaded from NCBI (for PathPhynder)
-```
-cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
 
-mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_references.fa
-```
+For the mammalian mitochondrial phylogenetic placement analysis we created Multiple Sequence Alignments (MSA) for all recovered mammalian taxa and computed trees using PathPhynder and BEAST. 
 
-## Create consensus sequence for sample (for BEAST)
+## BEAST (Phylogenetic placement mtDNA)
+## Step 1: Create consensus sequence for sample (for BEAST)
 ```
 angsd -dofasta 2 -docounts 1 -minmapq 25 -minq 25 -uniqueonly 1 -mininddepth 5 -i Sample.taxa.sort.bam -out Cons_Sample.taxa.depth5
 
 gunzip Cons_Sample.taxa.depth5.fa.gz
 bash rename_fasta_header.sh
 ```
-## Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus (for BEAST)
+## Step 2: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus (for BEAST)
 ```
 cat Cons_Sample.taxa.depth5.fa *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references_query.fa
 mafft --thread n cat_NCBI_mitogenome_references_query.fa > Aln_NCBI_mitogenome_references_query.fa
 ```
-## Build consensus sequence for mitogenome reference sequences downloaded from NCBI
-1.) Aln-file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
+## Step 3: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
+1.) Alignment file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
 
 2.) Alignment created from all clade-consensus mitogenome references in Geneious
 
-## Running BEAST (Phylogenetic placement mtDNA)
+## Step 4: Running BEAST (Phylogenetic placement mtDNA)
 
 We confirmed the phylogenetic placement of our sequence using a selection of Elephantidae mitochondrial reference sequences, GTR+G, strict clock, a birth-death substitution model, and ran the MCMC chain for 20,000,000 runs, sampling every 20,000 steps. Convergence was assessed using Tracer v1.7.2 and an effective sample size (ESS) > 200. 
 
@@ -304,7 +301,16 @@ beast2 -threads n Aln_NCBI_mitogenome_references_query.xml
 
 5.) FigTree (v1.4.4), Tree visualized with posterior probabilities
 
-## Running BEAST (Reference tree for PathPhynder)
+
+## PathPhynder (Phylogenetic placement mtDNA)
+## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI (for PathPhynder)
+```
+cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
+
+mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_references.fa
+```
+
+## Step 2: Running BEAST (to create reference tree for PathPhynder)
 1.) Aln_NCBI_mitogenome_references.fa opened in BEAUti (v1.10.4)
 
 2.) Run with default parameters, MCMC chain for 20,000,000 runs, sampling every 20,000 steps
@@ -317,8 +323,8 @@ beast2 -threads n Aln_NCBI_mitogenome_references.xml
 
 5.) FigTree (v1.4.4), Tree converted into Newick format for PathPhynder: ref_tree.nwk
 
-## For PathPhynder (Phylogenetic placement mtDNA)
-Input files:
+## For PathPhynder 
+Required input files:
 - ref_tree.nwk
 - Aln_NCBI_mitogenome_references.fa
 - Query: sequencing_reads.fastq, e.g. Sample.taxa.fq
@@ -341,7 +347,11 @@ python get_consensus NCBI_mitogenome_references.fa Cons_NCBI_mitogenome_referenc
 bwa index Cons_NCBI_mitogenome_references.fa
 ```
 ### Step 5: Mapping sample reads to reference consensus sequence ###
-Create directory outputfolderpath/pathPhynder_analysis/map_to_cons/
+First, create a directory, e.g. called outputfolderpath/pathPhynder_analysis/map_to_cons/
+```
+mkdir map_to_cons
+```
+Then map ancient sample reads to reference consensus sequence
 ```
 bwa aln -l 1024 -n 0.001 -t 10 /path/to/Cons_NCBI_mitogenome_references.fa /path/to/samples/from/ngsLCA/Sample.taxa.fq | bwa samse /path/to/Cons_NCBI_mitogenome_references.fa  - /path/to/samples/from/ngsLCA/Sample.taxa.fq | samtools view -F 4 -q 25 -@ 10 -uS - | samtools sort -@ 10 -o outputfolderpath/path/Phynder_analysis/map_to_cons/Sample.taxa.sort.bam
 ```
@@ -349,21 +359,23 @@ Count number of reads mapped
 ```
 samtools view -c file.sort.bam
 ```
-Coverage estimates
+Estimate coverage 
 ```
 bamcov -H file.sort.bam
 ```
-Read depth across mitogenome
+Calculate read depth across mitogenome
 ```
 samtools depth file.sort.bam > file.sort.coverage
 ```
-Read length distribution for mapped reads
+Recover read length distribution for mapped reads
 ```
 samtools view file.bam | cut -f 10 | perl -ne 'chomp;print length($_) . "\n"' | sort | uniq -c > file.readlength_dist.txt
 ```
 ### Running PathPhynder
-Create directory pathphynder_results in e.g. outputfolderpath/pathPhynder_analysis/
-
+First, create a directory pathphynder_results in e.g. outputfolderpath/pathPhynder_analysis/
+```
+mkdir pathPhynder_analysis
+```
 ### Step 1: Assigning informative SNPs to tree branches
 ```
 /home/kbt252/Software/phynder/phynder -B -o /path/to/pathphynder_results/branches.snp /path/to/tree/ref_tree.nwk /path/to/fixed_cons_vcf/NCBI_mitogenome_references_fixed_cons.vcf
