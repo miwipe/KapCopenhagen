@@ -281,7 +281,7 @@ mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_referen
 
 3.) Consensus sequence created with 75% Majority rule from all clade-consensus mitogenome references in Geneious (Cons_NCBI_mitogenome_references_cons.fa)
 
-## Step 3: Map ancient sample reads (mastodon) to consensus sequence made from all (Elephantidae) clade-consensus mitogenome references
+## Step 3: Map ancient sample reads to consensus sequence made from all clade-consensus mitogenome references
 ```
 bwa aln -l 1024 -n 0.001 -t 10 Cons_NCBI_mitogenome_references_cons.fa Sample.taxa.fq | bwa samse Cons_NCBI_mitogenome_references_cons.fa  - Sample.taxa.fq | samtools view -F 4 -q 25 -@ 10 -uS - | samtools sort -@ 10 -o Sample.taxa.sort.bam
 ```
