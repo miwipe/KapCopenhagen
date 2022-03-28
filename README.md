@@ -412,6 +412,11 @@ pathPhynder -s all -t 100 -m transversions -i /path/to/tree/ref_tree.nwk -p /pat
 
 We used two separate approaches when dating our mastodon mitogenome, as demonstrated in a recent publication (Karpinski et al. 2020). First, we determined the age of our sequence by comparing against a dataset of radiocarbon dated specimens (n=13) only. Secondly, we estimated the age of our sequence including both molecularly (n=22) and radiocarbon dated (n=13) specimens using the molecular dates previously determined by Karpinski et al.(2020). We utilised the same BEAST parameters as Karpinski et al. and set the age of our sample with a gamma distribution (5%-Quantile: 8.72E4, Median: 1.178E6, 95%-Quantile: 5.093E6; Initial value: 74,900; Shape: 1; Scale: 1,700,000). In short, we specified a substitution model of GTR+G4, a strict clock, constant population size, and ran the MCMC chain for 50,000,000 runs, sampling every 50,000 steps. Convergence of the run was again determined using Tracer. 
 
+```
+beast -threads n Mastodon_carbondated.xml
+beast -threads n Mastodon_carbondated_moldated.xml
+```
+
 # Molecular dating of the ancient Betula chloroplast from Kap København.
 
 This workflow will describe how we performed the molecular dating analysis on the Betula chloroplast sequence.
