@@ -323,24 +323,24 @@ Input files:
 - Aln_NCBI_mitogenome_references.fa
 - Query: sequencing_reads.fastq, e.g. Sample.taxa.fq
 
-### For PathPhynder: Create VCF with snp-sites from multiple sequence alignment (MSA) file
+### Step 1: Create VCF with snp-sites from multiple sequence alignment (MSA) file
 ```
 snp-sites -v -c -o NCBI_mitogenome_references.vcf NCBI_mitogenome_references.fa
 ```
-### For PathPhynder: Change missing data coding in vcf with Rscript
+### Step 2: Change missing data coding in vcf with Rscript
 ```
 Rscript fix_vcf.R NCBI_mitogenome_references.vcf NCBI_mitogenome_references_fixed.vcf
 ```
-### For PathPhynder: Fix consensus naming problem in vcf file (replace 1’s with “consensus” in first column of vcf) ###
+### Step 3: Fix consensus naming problem in vcf file (replace 1’s with “consensus” in first column of vcf) ###
 ```
 awk '{ if ($1 == "1") $1="consensus";}1' NCBI_mitogenome_references_fixed.vcf | sed 's/ /\t/g' > NCBI_mitogenome_references_fixed_cons.vcf
 ```
-### For PathPhynder: Create consensus for MSA.fa and index it ###
+### Step 4: Create consensus for MSA.fa and index it ###
 ```
 python get_consensus NCBI_mitogenome_references.fa Cons_NCBI_mitogenome_references.fa
 bwa index Cons_NCBI_mitogenome_references.fa
 ```
-### For PathPhynder: Mapping sample reads to reference consensus sequence ###
+### Step 5: Mapping sample reads to reference consensus sequence ###
 Create directory outputfolderpath/pathPhynder_analysis/map_to_cons/
 ```
 bwa aln -l 1024 -n 0.001 -t 10 /path/to/Cons_NCBI_mitogenome_references.fa /path/to/samples/from/ngsLCA/Sample.taxa.fq | bwa samse /path/to/Cons_NCBI_mitogenome_references.fa  - /path/to/samples/from/ngsLCA/Sample.taxa.fq | samtools view -F 4 -q 25 -@ 10 -uS - | samtools sort -@ 10 -o outputfolderpath/path/Phynder_analysis/map_to_cons/Sample.taxa.sort.bam
@@ -364,16 +364,16 @@ samtools view file.bam | cut -f 10 | perl -ne 'chomp;print length($_) . "\n"' | 
 ### Running PathPhynder
 Create directory pathphynder_results in e.g. outputfolderpath/pathPhynder_analysis/
 
-### Running PathPhynder: 1.) Assigning informative SNPs to tree branches
+### Step 1: Assigning informative SNPs to tree branches
 ```
 /home/kbt252/Software/phynder/phynder -B -o /path/to/pathphynder_results/branches.snp /path/to/tree/ref_tree.nwk /path/to/fixed_cons_vcf/NCBI_mitogenome_references_fixed_cons.vcf
 ```
-### Running PathPhynder: 2.) Call SNPs in a given dataset of ancient samples and find the best path and branch where these can be mapped in the tree
+### Step 2: Call SNPs in a given dataset of ancient samples and find the best path and branch where these can be mapped in the tree
 Prepare data: this will output a bed file for calling variants and tables for pylogenetic placement. Start command in results folder (e.g. pathphynder_results), as this command creates a new directory called “tree_data” in the folder you run the command in
 ```
 pathPhynder -s prepare -i /path/to/tree/ref_tree.nwk -p taxa_pathphynder_tree -f /path/to/pathphynder_results/branches.snp  -r /path/to/Cons_NCBI_mitogenome_references.fa
 ```
-### Running PathPhynder: 3.) Find best branch path and create tree file
+### Step 3: Find best branch path and create tree file
 
 FOR SINGLE BAM FILE TRANSITIONS AND TRANSVERSIONS
 ```
