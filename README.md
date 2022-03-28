@@ -268,24 +268,31 @@ done
 For the mammalian mitochondrial phylogenetic placement analysis we created Multiple Sequence Alignments (MSA) for all recovered mammalian taxa and computed trees using PathPhynder and BEAST. 
 
 ## BEAST (Phylogenetic placement mtDNA)
-## Step 1: Create consensus sequence for sample (for BEAST)
+## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
+```
+cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
+
+mafft --thread n cat_NCBI_mitogenome_references.fa > Aln_NCBI_mitogenome_references.fa
+```
+## Step 2: Create consensus sequence for sample 
 ```
 angsd -dofasta 2 -docounts 1 -minmapq 25 -minq 25 -uniqueonly 1 -mininddepth 5 -i Sample.taxa.sort.bam -out Cons_Sample.taxa.depth5
 
 gunzip Cons_Sample.taxa.depth5.fa.gz
 bash rename_fasta_header.sh
 ```
-## Step 2: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus (for BEAST)
+## Step 3: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
+1.) Alignment file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
+
+2.) Alignment created from all clade-consensus mitogenome references in Geneious (*_NCBI_mitogenome_references.fa)
+
+## Step 4: Concatenating and aligning all mitogenome reference sequences downloaded from NCBI and sample consensus
 ```
 cat Cons_Sample.taxa.depth5.fa *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references_query.fa
 mafft --thread n cat_NCBI_mitogenome_references_query.fa > Aln_NCBI_mitogenome_references_query.fa
 ```
-## Step 3: Build consensus sequence for mitogenome reference sequences downloaded from NCBI
-1.) Alignment file opened in Geneious, consensus sequences created with 75% Majority rule for family level/each clade
 
-2.) Alignment created from all clade-consensus mitogenome references in Geneious
-
-## Step 4: Running BEAST (Phylogenetic placement mtDNA)
+## Step 5: Running BEAST (Phylogenetic placement mtDNA)
 
 We confirmed the phylogenetic placement of our sequence using a selection of Elephantidae mitochondrial reference sequences, GTR+G, strict clock, a birth-death substitution model, and ran the MCMC chain for 20,000,000 runs, sampling every 20,000 steps. Convergence was assessed using Tracer v1.7.2 and an effective sample size (ESS) > 200. 
 
@@ -303,7 +310,7 @@ beast2 -threads n Aln_NCBI_mitogenome_references_query.xml
 
 
 ## PathPhynder (Phylogenetic placement mtDNA)
-## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI (for PathPhynder)
+## Step 1: Concatenating and aligning mitogenome reference sequences downloaded from NCBI 
 ```
 cat *_NCBI_mitogenome_references.fa > cat_NCBI_mitogenome_references.fa
 
