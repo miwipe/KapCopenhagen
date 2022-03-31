@@ -245,9 +245,9 @@ for file in *lca.txt.gz; do grep 'Elephantidae' $file | awk -F":" '{print ">"$1"
 
 Alternatively, if nucleotide quality scores are desired the read IDs can be extracted and used to extract the reads and additional information from the original raw fastq files using Seqtk and the commands below.
 
-Make a list of all the lca 
+Make a list of all the lca (check that awk prints the sample names, else change the column number $9)
 ```
-ll *lca.txt.gz | awk '{print $}' > sample.list
+ll *lca.txt.gz | awk '{print $9}' > sample.list
 
 ```
 Extract readID's for a taxa.list (taxonomic level and below, a text file with a taxonomic name per line) from a samplelist of .lca.txt.gz files 
