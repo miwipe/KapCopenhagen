@@ -123,17 +123,38 @@ do
 bowtie2-build --threads 50 $file $file
 done
 ``` 
-## Downloading and building the PhyloNorway arctic and boreal plant database (Wang et al. 2021, https://www.nature.com/articles/s41586-021-04016-x)
+
+### For boreal and arctic animals, that were not present in either of the databases above with full genomes, we searched the genome database on NCBI and added these manually
+``` 
+while read line 
+do 
+   ftplink=`echo $line | cut -f4 -d" "`
+   version=`echo $ftplink | cut -f 10 -d"/"` 
+   echo ftp link: $ftplink 
+   echo $version 
+   wget $ftplink
+done < Arctic_faunal_genome_ftp_list.tsv
+``` 
+Including two published reference genomes not available through NCBI, which can be found here
+Mammuthus primigenius,TaxID: 37349,https://doi.org/10.1016/j.cub.2015.04.007
+Coelodonta antiquitatis,TaxID: 222863,https://doi.org/10.1016/j.cell.2021.07.032
+
+All genomes can be dowloaded as a single fasta file using this link: https://sid.erda.dk/cgi-sid/ls.py?share_id=FFwLeRDDgG 
+
+### Downloading and building the PhyloNorway arctic and boreal plant database (Wang et al. 2021, https://www.nature.com/articles/s41586-021-04016-x)
 In your browser navigate to the PhyloNorway plant genome repo here https://dataverse.no/dataset.xhtml;jsessionid=dfe334bbadc5fb9c5eab4332d568?persistentId=doi:10.18710/3CVQAG&version=DRAFT
 make sure you have enough data storage available as these file take up +200 GB storage, and will take up even more once index by bowtie2. 
 
-Now in your terminal convert fasta file into indexed libraries, by:
+Now in your terminal convert fasta file into indexed libraries
 ``` 
-for file in *fasta
+for file in PhyloNorway*fasta
 do
 bowtie2-build --threads 50 $file $file
 done
 ```
+
+### Taxonomy files 
+Lastly we downloaded the corresponding NCBI taxonomy, and added all accessions from the PhyloNorway plant database as well as the Arctic Boreal animal genomes manually. The complete fasta file with all animal genomes and the updated taxonomy accession2taxID file can be dowloaded here (and the download step for the animal genomes mentioned above can be skipped): https://sid.erda.dk/cgi-sid/ls.py?share_id=FFwLeRDDgG 
 
 ## Preprocessing quality check, adaptor trimming and mapping the raw sequence data
 
