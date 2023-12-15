@@ -211,7 +211,7 @@ done
 
 ## Taxonomic profiling and DNA damage estimates (metaDMG) for each individual taxonomic node
 
-We used metaDMG (https://github.com/metaDMG-dev/metaDMG-core) to taxonomically classify each individual read to the loest taxonomic node possible using a similarity identity between 95-100% to reference.  
+We used metaDMG (https://github.com/metaDMG-dev/metaDMG-core) to taxonomically classify each individual read to the lowest taxonomic node possible using a similarity identity between 95-100% to reference.  
 
 ```
 conda activate metaDMG7
